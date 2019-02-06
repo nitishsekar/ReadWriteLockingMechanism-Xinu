@@ -1,0 +1,10 @@
+Ans 1:
+
+Another method of avoiding priority inversion would be to assign a relatively high priority(P) to a lock. Whenever a process/thread acquires the lock, its priority is raised to P if P is greateri than the process' priority. If there is a situation where a process with a priority Pn waits for the lock, and Pn > P, then P is updated to Pn and this new value will be used henceforth. This has a similar effect as the solution provided in PA3, but it is computationally less expensive.
+A test case (pseudo code) has been included in test.c.
+
+Ans 2:
+
+In the given pseudocode, the lock being acquired by threads while running do_update() is a reader lock. This means that as many as 10 threads can acquire the lock and execute try_update(). In try_update(), a semaphore is used to execute buffer_add(), with the aforementioned count of 10. This means multiple threads can write to the global buffer simultaneously. Consider two such threads. Thread 1 has executed memcpy(), but before it can update the value of buf->len, thread 2 has executed the line 
+	int free = buf->size - buf->len;
+Which means the calculated free space is not in sync with the actual size of the character buffer. This will eventually lead to an issue.
